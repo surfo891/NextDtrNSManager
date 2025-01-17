@@ -9,8 +9,8 @@ android {
         applicationId "com.doubleangels.nextdnsmanagement"
         minSdkVersion 32
         targetSdk 35
-        versionCode 234
-        versionName '5.4.0'
+        versionCode 235
+        versionName '5.4.1'
         resourceConfigurations += ["en", "zh", "nl", "fi", "fr", "de", "in", "it", "ja", "pl", "pt", "es", "sv", "tr"]
     }
 
@@ -51,7 +51,7 @@ android {
 }
 
 dependencies {
-    implementation "androidx.activity:activity:1.9.3"
+    implementation "androidx.activity:activity:1.10.0"
     implementation 'androidx.appcompat:appcompat:1.7.0'
     implementation 'androidx.preference:preference:1.2.1'
     implementation 'androidx.webkit:webkit:1.12.1'
