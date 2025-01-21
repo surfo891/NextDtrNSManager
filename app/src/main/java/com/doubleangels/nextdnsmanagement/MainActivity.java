@@ -52,8 +52,6 @@ public class MainActivity extends AppCompatActivity {
 
     @SuppressLint("WrongThread")
     @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
-    @SuppressLint("WrongThread")
-    @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
