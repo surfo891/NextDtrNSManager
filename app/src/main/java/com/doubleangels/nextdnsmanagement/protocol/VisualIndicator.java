@@ -129,21 +129,6 @@ public class VisualIndicator {
                 .header("Cache-Control", "no-cache")
                 .build();
 
-        String hostname = request.url().host();
-        
-        // Handle dynamic subdomains of test.nextdns.io
-        if (!DNSResolver.isValidNextDNSSubdomain(hostname)) {
-            sentryManager.captureMessage("Invalid NextDNS subdomain format: " + hostname);
-            setConnectionStatus(activity.findViewById(R.id.connectionStatus), R.drawable.failure, R.color.red, context);
-            return;
-        }
-
-        if (!DNSResolver.resolveWithRetry(hostname)) {
-            sentryManager.captureMessage("Failed to resolve hostname after retries: " + hostname);
-            setConnectionStatus(activity.findViewById(R.id.connectionStatus), R.drawable.failure, R.color.red, context);
-            return;
-        }
-
         // Execute asynchronous HTTP request
         httpClient.newCall(request).enqueue(new Callback() {
             @Override
@@ -218,7 +203,7 @@ public class VisualIndicator {
         if (e instanceof UnknownHostException ||
                 e instanceof SocketTimeoutException ||
                 e instanceof SocketException ||
-                e instanceof SSLException || 
+                e instanceof SSLException ||
                 e instanceof ConnectionShutdownException) {
             sentryManager.captureMessage("Network exception captured: " + e);
         } else {
