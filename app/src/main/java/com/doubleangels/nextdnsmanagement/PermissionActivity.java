@@ -29,6 +29,9 @@ import java.util.List;
 import java.util.Locale;
 
 public class PermissionActivity extends AppCompatActivity {
+    
+    private static final int REQUEST_POST_NOTIFICATIONS = 100;
+    private static final String POST_NOTIFICATIONS = android.Manifest.permission.POST_NOTIFICATIONS;
 
     // SentryManager instance for error tracking
     public SentryManager sentryManager;
@@ -51,17 +54,39 @@ public class PermissionActivity extends AppCompatActivity {
             sentryManager.captureMessage("Using locale: " + appLocale);
             // Setup visual indicator
             setupVisualIndicatorForActivity(sentryManager, this);
+            
+            // Check and request notification permission if needed
+            if (needsNotificationPermission()) {
+                requestNotificationPermission();
+            }
         } catch (Exception e) {
-            // Catch and log exceptions
-            sentryManager.captureException(e);
-        }
-        // Setup RecyclerView for displaying permissions list
         RecyclerView recyclerView = findViewById(R.id.permissionRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         // Get list of permissions and set up RecyclerView adapter
         List<PermissionInfo> permissions = getPermissionsList(sentryManager);
         PermissionsAdapter adapter = new PermissionsAdapter(permissions);
         recyclerView.setAdapter(adapter);
+    }
+
+    private boolean needsNotificationPermission() {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+            return checkSelfPermission(POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED;
+        }
+        return false;
+    }
+
+    private void requestNotificationPermission() {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+            requestPermissions(new String[]{POST_NOTIFICATIONS}, REQUEST_POST_NOTIFICATIONS);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQUEST_POST_NOTIFICATIONS) {
+            refreshPermissionsList();
+        }
     }
 
     // Setup toolbar for the activity
@@ -98,6 +123,14 @@ public class PermissionActivity extends AppCompatActivity {
         }
     }
 
+    private void refreshPermissionsList() {
+        RecyclerView recyclerView = findViewById(R.id.permissionRecyclerView);
+        if (recyclerView != null) {
+            List<PermissionInfo> permissions = getPermissionsList(sentryManager);
+            recyclerView.setAdapter(new PermissionsAdapter(permissions));
+        }
+    }
+
     // Retrieve the list of permissions requested by the app
     private List<PermissionInfo> getPermissionsList(SentryManager sentryManager) {
         List<PermissionInfo> permissions = new ArrayList<>();
@@ -105,12 +138,24 @@ public class PermissionActivity extends AppCompatActivity {
             // Get package info including requested permissions
             PackageInfo packageInfo = getPackageManager().getPackageInfo(getPackageName(), PackageManager.GET_PERMISSIONS);
             if (packageInfo.requestedPermissions != null) {
-                // Retrieve PermissionInfo for each requested permission and add to list
                 for (String permission : packageInfo.requestedPermissions) {
-                    PermissionInfo permissionInfo = getPackageManager().getPermissionInfo(permission, 0);
-                    permissions.add(permissionInfo);
+                    try {
+                        // Skip POST_NOTIFICATIONS permission on pre-Android 13 devices
+                        if (permission.equals(POST_NOTIFICATIONS) && 
+                            android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.TIRAMISU) {
+                            continue;
+                        }
+                        
+                        PermissionInfo permissionInfo = getPackageManager().getPermissionInfo(permission, 0);
+                        if (permissionInfo != null) {
+                            permissions.add(permissionInfo);
+                        }
+                    } catch (PackageManager.NameNotFoundException e) {
+                        sentryManager.captureMessage("Unable to get info for permission: " + permission);
+                    }
                 }
             }
+        } catch (PackageManager.NameNotFoundException e) {
         } catch (PackageManager.NameNotFoundException e) {
             // Catch and log exceptions
             sentryManager.captureException(e);

@@ -1,6 +1,7 @@
 package com.doubleangels.nextdnsmanagement.adaptors;
 
 import android.annotation.SuppressLint;
+import android.content.pm.PackageManager;
 import android.content.pm.PermissionInfo;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -41,13 +42,32 @@ public class PermissionsAdapter extends RecyclerView.Adapter<PermissionsAdapter.
     public void onBindViewHolder(@NonNull PermissionViewHolder holder, int position) {
         // Get the PermissionInfo object at the given position
         PermissionInfo permissionInfo = permissions.get(position);
+        
+        // Check if this is a runtime permission that needs to be checked
+        boolean isGranted = true;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            if (permissionInfo.name.equals(android.Manifest.permission.POST_NOTIFICATIONS)) {
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+                    isGranted = holder.itemView.getContext().checkSelfPermission(permissionInfo.name) 
+                        == PackageManager.PERMISSION_GRANTED;
+                }
+            }
+        }
+        
         // Set the permission name in the TextView
         holder.permissionName.setText(permissionInfo.loadLabel(holder.itemView.getContext().getPackageManager()).toString().toUpperCase());
+        
         // Set the permission description in the TextView
         CharSequence description = permissionInfo.loadDescription(holder.itemView.getContext().getPackageManager());
-        if (description != null && !description.toString().endsWith(".")) {
-            holder.permissionDescription.setText((description + ".").toUpperCase());
+        String displayText;
+        if (description == null) {
+            displayText = "";
         } else {
+            displayText = description.toString();
+            if (!displayText.endsWith(".")) {
+                displayText += ".";
+            }
+            displayText = displayText.toUpperCase() + (isGranted ? " (GRANTED)" : " (NOT GRANTED)");
             holder.permissionDescription.setText(description);
         }
     }
