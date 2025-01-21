@@ -14,10 +14,13 @@ import androidx.core.content.ContextCompat;
 import androidx.lifecycle.DefaultLifecycleObserver;
 import androidx.lifecycle.LifecycleOwner;
 
+
 import com.doubleangels.nextdnsmanagement.R;
 import com.doubleangels.nextdnsmanagement.sentry.SentryManager;
+import com.doubleangels.nextdnsmanagement.utils.DNSResolver;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+
 
 import java.io.IOException;
 import java.net.SocketException;
@@ -126,6 +129,21 @@ public class VisualIndicator {
                 .header("Cache-Control", "no-cache")
                 .build();
 
+        String hostname = request.url().host();
+        
+        // Handle dynamic subdomains of test.nextdns.io
+        if (!DNSResolver.isValidNextDNSSubdomain(hostname)) {
+            sentryManager.captureMessage("Invalid NextDNS subdomain format: " + hostname);
+            setConnectionStatus(activity.findViewById(R.id.connectionStatus), R.drawable.failure, R.color.red, context);
+            return;
+        }
+
+        if (!DNSResolver.resolveWithRetry(hostname)) {
+            sentryManager.captureMessage("Failed to resolve hostname after retries: " + hostname);
+            setConnectionStatus(activity.findViewById(R.id.connectionStatus), R.drawable.failure, R.color.red, context);
+            return;
+        }
+
         // Execute asynchronous HTTP request
         httpClient.newCall(request).enqueue(new Callback() {
             @Override
@@ -181,17 +199,40 @@ public class VisualIndicator {
         connectionStatus.setColorFilter(ContextCompat.getColor(context, colorResId));
     }
 
+
     // Method to catch and handle network errors
     private void catchNetworkErrors(@NonNull Exception e) {
+        // Special handling for UnknownHostException
+        if (e instanceof UnknownHostException) {
+            String hostname = extractHostname(e.getMessage());
+            if (hostname != null && hostname.endsWith("test.nextdns.io")) {
+                // Attempt one more DNS resolution
+                if (DNSResolver.resolveWithRetry(hostname)) {
+                    sentryManager.captureMessage("DNS resolution succeeded on retry for: " + hostname);
+                    return;
+                }
+            }
+        }
+
         // Check type of network exception and capture message or exception
         if (e instanceof UnknownHostException ||
                 e instanceof SocketTimeoutException ||
                 e instanceof SocketException ||
-                e instanceof SSLException ||
+                e instanceof SSLException || 
                 e instanceof ConnectionShutdownException) {
             sentryManager.captureMessage("Network exception captured: " + e);
         } else {
             sentryManager.captureException(e);
         }
+    }
+
+    private String extractHostname(String message) {
+        if (message == null) return null;
+        int startIndex = message.indexOf("\"");
+        int endIndex = message.lastIndexOf("\"");
+        if (startIndex >= 0 && endIndex > startIndex) {
+            return message.substring(startIndex + 1, endIndex);
+        }
+        return null;
     }
 }
