@@ -14,13 +14,12 @@ import androidx.core.content.ContextCompat;
 import androidx.lifecycle.DefaultLifecycleObserver;
 import androidx.lifecycle.LifecycleOwner;
 
-
 import com.doubleangels.nextdnsmanagement.R;
 import com.doubleangels.nextdnsmanagement.sentry.SentryManager;
 import com.doubleangels.nextdnsmanagement.utils.DNSResolver;
+
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-
 
 import java.io.IOException;
 import java.net.SocketException;
