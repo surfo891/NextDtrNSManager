@@ -16,6 +16,8 @@ import androidx.lifecycle.LifecycleOwner;
 
 import com.doubleangels.nextdnsmanagement.R;
 import com.doubleangels.nextdnsmanagement.sentry.SentryManager;
+import com.doubleangels.nextdnsmanagement.utils.DNSResolver;
+
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -181,8 +183,21 @@ public class VisualIndicator {
         connectionStatus.setColorFilter(ContextCompat.getColor(context, colorResId));
     }
 
+
     // Method to catch and handle network errors
     private void catchNetworkErrors(@NonNull Exception e) {
+        // Special handling for UnknownHostException
+        if (e instanceof UnknownHostException) {
+            String hostname = extractHostname(e.getMessage());
+            if (hostname != null && hostname.endsWith("test.nextdns.io")) {
+                // Attempt one more DNS resolution
+                if (DNSResolver.resolveWithRetry(hostname)) {
+                    sentryManager.captureMessage("DNS resolution succeeded on retry for: " + hostname);
+                    return;
+                }
+            }
+        }
+
         // Check type of network exception and capture message or exception
         if (e instanceof UnknownHostException ||
                 e instanceof SocketTimeoutException ||
@@ -193,5 +208,15 @@ public class VisualIndicator {
         } else {
             sentryManager.captureException(e);
         }
+    }
+
+    private String extractHostname(String message) {
+        if (message == null) return null;
+        int startIndex = message.indexOf("\"");
+        int endIndex = message.lastIndexOf("\"");
+        if (startIndex >= 0 && endIndex > startIndex) {
+            return message.substring(startIndex + 1, endIndex);
+        }
+        return null;
     }
 }

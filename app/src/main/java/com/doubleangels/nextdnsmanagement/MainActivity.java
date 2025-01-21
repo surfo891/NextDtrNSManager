@@ -1,7 +1,9 @@
 package com.doubleangels.nextdnsmanagement;
 
+
 import static android.Manifest.permission.POST_NOTIFICATIONS;
 
+import android.content.ComponentCallbacks2;
 import android.annotation.SuppressLint;
 import android.app.DownloadManager;
 import android.content.Intent;
@@ -44,16 +46,31 @@ import com.jakewharton.processphoenix.ProcessPhoenix;
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
-
-    // WebView for displaying web content
     private WebView webView;
-    // Boolean flag for dark mode status
     private Boolean darkModeEnabled = false;
+    private Boolean isWebViewInitialized = false;
+    private Bundle webViewState = null;
+    
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (webView != null) {
+            Bundle webViewBundle = new Bundle();
+            webView.saveState(webViewBundle);
+            outState.putBundle("webViewState", webViewBundle);
+        }
+        outState.putBoolean("darkModeEnabled", darkModeEnabled);
+    }
+
     @SuppressLint("WrongThread")
     @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (savedInstanceState != null) {
+            webViewState = savedInstanceState.getBundle("webViewState");
+            darkModeEnabled = savedInstanceState.getBoolean("darkModeEnabled");
+        }
         setContentView(R.layout.activity_main);
         if (!ProcessPhoenix.isPhoenixProcess(this)) {
             // Initialize SentryManager for error tracking
@@ -91,8 +108,45 @@ public class MainActivity extends AppCompatActivity {
     // Cleanup when activity is destroyed
     protected void onDestroy() {
         super.onDestroy();
-        webView.removeAllViews();
-        webView.destroy();
+        cleanupWebView();
+    }
+
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        if (!isWebViewInitialized) {
+            return;
+        }
+        cleanupWebView();
+    }
+
+    @Override
+    public void onTrimMemory(int level) {
+        super.onTrimMemory(level);
+        if (level >= ComponentCallbacks2.TRIM_MEMORY_MODERATE) {
+            if (!isWebViewInitialized) {
+                return;
+            }
+            cleanupWebView();
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (webView != null) {
+            webView.onPause();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (webView != null) {
+            webView.onResume();
+        } else if (!isWebViewInitialized) {
+            setupWebViewForActivity(getString(R.string.main_url));
+        }
     }
 
     // Setup toolbar for the activity
@@ -180,12 +234,37 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    // Setup WebView for the activity
+    private void cleanupWebView() {
+        if (webView != null) {
+            try {
+                // Remove all loaded content
+                webView.loadUrl("about:blank");
+                
+                // Remove all views
+                webView.removeAllViews();
+                
+                // Destroy the WebView
+                webView.destroy();
+            } catch (Exception e) {
+                // Silently handle any exceptions during cleanup
+            } finally {
+                webView = null;
+                isWebViewInitialized = false;
+            }
+        }
+    }
+
     @SuppressLint("SetJavaScriptEnabled")
     public void setupWebViewForActivity(String url) {
         webView = findViewById(R.id.webView);
+        if (webViewState != null) {
+            webView.restoreState(webViewState);
+        } else {
+            webView.loadUrl(url);
+        }
         WebSettings webViewSettings = webView.getSettings();
         webViewSettings.setJavaScriptEnabled(true);
+        webViewSettings.setDomStorageEnabled(true);
         webViewSettings.setDomStorageEnabled(true);
         webViewSettings.setDatabaseEnabled(true);
         webViewSettings.setCacheMode(WebSettings.LOAD_DEFAULT);
@@ -209,6 +288,7 @@ public class MainActivity extends AppCompatActivity {
         setupDownloadManagerForActivity();
         // Load URL into WebView
         webView.loadUrl(url);
+        isWebViewInitialized = true;
     }
 
     // Setup DownloadManager for handling file downloads

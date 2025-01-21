@@ -5,17 +5,17 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PermissionInfo;
 import android.content.res.Configuration;
+import android.os.Build;
 import android.os.Bundle;
-import android.view.ContextThemeWrapper;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.ImageView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.lifecycle.LifecycleOwner;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -28,43 +28,57 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+@RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
 public class PermissionActivity extends AppCompatActivity {
+    private static final int REQUEST_POST_NOTIFICATIONS = 100;
+    private static final String POST_NOTIFICATIONS = android.Manifest.permission.POST_NOTIFICATIONS;
 
-    // SentryManager instance for error tracking
-    public SentryManager sentryManager;
+    private SentryManager sentryManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_permission);
-        // Initialize SentryManager for error tracking
+
         sentryManager = new SentryManager(this);
         try {
-            // Check if Sentry is enabled and initialize it
             if (sentryManager.isEnabled()) {
                 SentryInitializer.initialize(this);
             }
-            // Setup toolbar
             setupToolbarForActivity();
-            // Setup language/locale
             String appLocale = setupLanguageForActivity();
             sentryManager.captureMessage("Using locale: " + appLocale);
-            // Setup visual indicator
-            setupVisualIndicatorForActivity(sentryManager, this);
+            setupVisualIndicatorForActivity(sentryManager);
+
+            if (needsNotificationPermission()) {
+                requestNotificationPermission();
+            }
         } catch (Exception e) {
-            // Catch and log exceptions
             sentryManager.captureException(e);
         }
-        // Setup RecyclerView for displaying permissions list
+
         RecyclerView recyclerView = findViewById(R.id.permissionRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        // Get list of permissions and set up RecyclerView adapter
         List<PermissionInfo> permissions = getPermissionsList(sentryManager);
-        PermissionsAdapter adapter = new PermissionsAdapter(permissions);
-        recyclerView.setAdapter(adapter);
+        recyclerView.setAdapter(new PermissionsAdapter(permissions));
     }
 
-    // Setup toolbar for the activity
+    private boolean needsNotificationPermission() {
+        return checkSelfPermission(POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED;
+    }
+
+    private void requestNotificationPermission() {
+        requestPermissions(new String[]{POST_NOTIFICATIONS}, REQUEST_POST_NOTIFICATIONS);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQUEST_POST_NOTIFICATIONS) {
+            refreshPermissionsList();
+        }
+    }
+
     private void setupToolbarForActivity() {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -72,68 +86,63 @@ public class PermissionActivity extends AppCompatActivity {
         if (actionBar != null) {
             actionBar.setDisplayShowTitleEnabled(false);
         }
-        // Setup click listener for connection status ImageView
+
         ImageView imageView = findViewById(R.id.connectionStatus);
         imageView.setOnClickListener(v -> startActivity(new Intent(this, StatusActivity.class)));
     }
 
-    // Setup language/locale for the activity
     private String setupLanguageForActivity() {
-        Configuration config = getResources().getConfiguration();
-        Locale appLocale = config.getLocales().get(0);
+        Locale appLocale = Locale.getDefault();
         Locale.setDefault(appLocale);
-        Configuration newConfig = new Configuration(config);
-        newConfig.setLocale(appLocale);
-        new ContextThemeWrapper(getBaseContext(), R.style.AppTheme).applyOverrideConfiguration(newConfig);
+        Configuration config = getResources().getConfiguration();
+        config.setLocale(appLocale);
+        getResources().updateConfiguration(config, getResources().getDisplayMetrics());
         return appLocale.getLanguage();
     }
 
-    // Setup visual indicator for the activity
-    private void setupVisualIndicatorForActivity(SentryManager sentryManager, LifecycleOwner lifecycleOwner) {
+    private void setupVisualIndicatorForActivity(SentryManager sentryManager) {
         try {
-            new VisualIndicator(this).initialize(this, lifecycleOwner, this);
+            new VisualIndicator(this).initialize(this, this, this);
         } catch (Exception e) {
-            // Catch and log exceptions
             sentryManager.captureException(e);
         }
     }
 
-    // Retrieve the list of permissions requested by the app
+    private void refreshPermissionsList() {
+        RecyclerView recyclerView = findViewById(R.id.permissionRecyclerView);
+        if (recyclerView != null) {
+            List<PermissionInfo> permissions = getPermissionsList(sentryManager);
+            recyclerView.setAdapter(new PermissionsAdapter(permissions));
+        }
+    }
+
     private List<PermissionInfo> getPermissionsList(SentryManager sentryManager) {
         List<PermissionInfo> permissions = new ArrayList<>();
         try {
-            // Get package info including requested permissions
             PackageInfo packageInfo = getPackageManager().getPackageInfo(getPackageName(), PackageManager.GET_PERMISSIONS);
             if (packageInfo.requestedPermissions != null) {
-                // Retrieve PermissionInfo for each requested permission and add to list
                 for (String permission : packageInfo.requestedPermissions) {
                     PermissionInfo permissionInfo = getPackageManager().getPermissionInfo(permission, 0);
                     permissions.add(permissionInfo);
                 }
             }
         } catch (PackageManager.NameNotFoundException e) {
-            // Catch and log exceptions
             sentryManager.captureException(e);
         }
         return permissions;
     }
 
-    // Inflate menu for the activity
-    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_back_only, menu);
+        getMenuInflater().inflate(R.menu.menu_back_only, menu);
         return true;
     }
 
-    // Handle menu item selection
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.back) {
-            // Navigate back to SettingsActivity
-            Intent mainIntent = new Intent(this, SettingsActivity.class);
-            startActivity(mainIntent);
+            startActivity(new Intent(this, SettingsActivity.class));
+            return true;
         }
-        return super.onContextItemSelected(item);
+        return super.onOptionsItemSelected(item);
     }
 }
