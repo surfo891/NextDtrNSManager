@@ -48,12 +48,31 @@ import java.util.Locale;
 public class MainActivity extends AppCompatActivity {
     private WebView webView;
     private Boolean darkModeEnabled = false;
-    private boolean isWebViewInitialized = false;
+    private Boolean isRecreating = false;
+    private Bundle webViewState = null;
+    
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (webView != null) {
+            Bundle webViewBundle = new Bundle();
+            webView.saveState(webViewBundle);
+            outState.putBundle("webViewState", webViewBundle);
+        }
+        outState.putBoolean("darkModeEnabled", darkModeEnabled);
+    }
 
     @SuppressLint("WrongThread")
     @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (savedInstanceState != null) {
+            webViewState = savedInstanceState.getBundle("webViewState");
+            darkModeEnabled = savedInstanceState.getBoolean("darkModeEnabled");
+        }
+        setContentView(R.layout.activity_main);
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         if (!ProcessPhoenix.isPhoenixProcess(this)) {
@@ -241,8 +260,10 @@ public class MainActivity extends AppCompatActivity {
     @SuppressLint("SetJavaScriptEnabled")
     public void setupWebViewForActivity(String url) {
         webView = findViewById(R.id.webView);
-        if (webView == null) {
-            return;
+        if (webViewState != null) {
+            webView.restoreState(webViewState);
+        } else {
+            webView.loadUrl(url);
         }
         WebSettings webViewSettings = webView.getSettings();
         webViewSettings.setJavaScriptEnabled(true);
