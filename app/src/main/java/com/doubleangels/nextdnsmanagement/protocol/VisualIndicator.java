@@ -4,8 +4,10 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.LinkProperties;
 import android.net.Network;
+import android.net.NetworkCapabilities;
 import android.net.NetworkRequest;
 import android.widget.ImageView;
+
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -14,10 +16,13 @@ import androidx.core.content.ContextCompat;
 import androidx.lifecycle.DefaultLifecycleObserver;
 import androidx.lifecycle.LifecycleOwner;
 
+
 import com.doubleangels.nextdnsmanagement.R;
 import com.doubleangels.nextdnsmanagement.sentry.SentryManager;
+import okhttp3.HttpUrl;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+
 
 import java.io.IOException;
 import java.net.SocketException;
@@ -36,14 +41,17 @@ import okhttp3.internal.http2.ConnectionShutdownException;
 
 public class VisualIndicator {
 
+
     // SentryManager instance for error tracking
     private final SentryManager sentryManager;
-    // OkHttpClient instance for making HTTP requests
     private final OkHttpClient httpClient;
-    // ConnectivityManager instance for network-related operations
-    private ConnectivityManager connectivityManager;
-    // NetworkCallback instance for monitoring network changes
-    private ConnectivityManager.NetworkCallback networkCallback;
+
+    public VisualIndicator(Context context) {
+        this.sentryManager = new SentryManager(context);
+        this.httpClient = new OkHttpClient.Builder().build();
+    }
+
+    // Method to check inherited DNS
     // Constructor to initialize VisualIndicator with context
     public VisualIndicator(Context context) {
         this.sentryManager = new SentryManager(context);
@@ -121,26 +129,46 @@ public class VisualIndicator {
     public void checkInheritedDNS(Context context, AppCompatActivity activity) {
         // Build HTTP request to test NextDNS connection
         Request request = new Request.Builder()
-                .url("https://test.nextdns.io")
-                .header("Accept", "application/json")
-                .header("Cache-Control", "no-cache")
-                .build();
+            .url("https://test.nextdns.io")
+            .header("Accept", "application/json")
+            .header("Cache-Control", "no-cache")
+            .header("Connection", "close")
+            .build();
 
-        // Execute asynchronous HTTP request
         httpClient.newCall(request).enqueue(new Callback() {
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) {
                 try {
-                    // If response is not successful, capture message and return
                     if (!response.isSuccessful()) {
-                        sentryManager.captureMessage("Response was not successful.");
+                        sentryManager.captureMessage(
+                            "Response was not successful: " + 
+                            response.code() + " - " + response.message()
+                        );
                         response.close();
                         return;
                     }
-                    // Parse JSON response
-                    assert response.body() != null;
-                    JsonObject testResponse = JsonParser.parseString(response.body().string().trim()).getAsJsonObject();
-                    // Get keys and values for NextDNS status and protocol
+                    
+                    if (response.body() == null) {
+                        sentryManager.captureMessage("Empty response body");
+                        response.close(); 
+                        return;
+                    }
+
+                    String responseString = response.body().string().trim();
+                    if (responseString.isEmpty()) {
+                        sentryManager.captureMessage("Empty response string");
+                        response.close();
+                        return;
+                    }
+
+                    JsonObject testResponse = JsonParser.parseString(responseString).getAsJsonObject();
+                    // Rest of the response handling code...
+                } finally {
+                    response.close();
+                }
+            }
+        });
+    }
                     String nextDnsStatusKey = context.getString(R.string.nextdns_status);
                     String nextDnsProtocolKey = context.getString(R.string.nextdns_protocol);
                     String usingNextDnsStatusValue = context.getString(R.string.using_nextdns_status);
