@@ -1,7 +1,9 @@
 package com.doubleangels.nextdnsmanagement;
 
+
 import static android.Manifest.permission.POST_NOTIFICATIONS;
 
+import android.content.ComponentCallbacks2;
 import android.annotation.SuppressLint;
 import android.app.DownloadManager;
 import android.content.Intent;
@@ -109,8 +111,45 @@ public class MainActivity extends AppCompatActivity {
     // Cleanup when activity is destroyed
     protected void onDestroy() {
         super.onDestroy();
-        webView.removeAllViews();
-        webView.destroy();
+        cleanupWebView();
+    }
+
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        if (!isWebViewInitialized) {
+            return;
+        }
+        cleanupWebView();
+    }
+
+    @Override
+    public void onTrimMemory(int level) {
+        super.onTrimMemory(level);
+        if (level >= ComponentCallbacks2.TRIM_MEMORY_MODERATE) {
+            if (!isWebViewInitialized) {
+                return;
+            }
+            cleanupWebView();
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (webView != null) {
+            webView.onPause();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (webView != null) {
+            webView.onResume();
+        } else if (!isWebViewInitialized) {
+            setupWebViewForActivity(getString(R.string.main_url));
+        }
     }
 
     // Setup toolbar for the activity
@@ -198,7 +237,26 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    // Setup WebView for the activity
+    private void cleanupWebView() {
+        if (webView != null) {
+            try {
+                // Remove all loaded content
+                webView.loadUrl("about:blank");
+                
+                // Remove all views
+                webView.removeAllViews();
+                
+                // Destroy the WebView
+                webView.destroy();
+            } catch (Exception e) {
+                // Silently handle any exceptions during cleanup
+            } finally {
+                webView = null;
+                isWebViewInitialized = false;
+            }
+        }
+    }
+
     @SuppressLint("SetJavaScriptEnabled")
     public void setupWebViewForActivity(String url) {
         webView = findViewById(R.id.webView);
@@ -207,9 +265,9 @@ public class MainActivity extends AppCompatActivity {
         } else {
             webView.loadUrl(url);
         }
-
         WebSettings webViewSettings = webView.getSettings();
         webViewSettings.setJavaScriptEnabled(true);
+        webViewSettings.setDomStorageEnabled(true);
         webViewSettings.setDomStorageEnabled(true);
         webViewSettings.setDatabaseEnabled(true);
         webViewSettings.setCacheMode(WebSettings.LOAD_DEFAULT);
@@ -233,6 +291,7 @@ public class MainActivity extends AppCompatActivity {
         setupDownloadManagerForActivity();
         // Load URL into WebView
         webView.loadUrl(url);
+        isWebViewInitialized = true;
     }
 
     // Setup DownloadManager for handling file downloads
