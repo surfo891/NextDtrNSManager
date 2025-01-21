@@ -6,6 +6,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 
 public class NextDNSApplication extends Application {
     @Override
@@ -15,11 +16,12 @@ public class NextDNSApplication extends Application {
         registerActivityLifecycleCallbacks(new ActivityLifecycleCallbacks() {
             @Override
             public void onActivityCreated(@NonNull Activity activity, @Nullable Bundle savedInstanceState) {
-                if (savedInstanceState != null && activity.getDelegate() != null) {
-                    activity.getDelegate().applyDayNight();
+                if (activity instanceof AppCompatActivity appCompatActivity) { // Ensure the activity is AppCompatActivity
+                    if (savedInstanceState != null) {
+                        appCompatActivity.getDelegate().applyDayNight();
+                    }
                 }
             }
-
             @Override
             public void onActivityStarted(@NonNull Activity activity) {}
 

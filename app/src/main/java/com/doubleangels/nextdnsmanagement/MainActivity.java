@@ -48,7 +48,7 @@ import java.util.Locale;
 public class MainActivity extends AppCompatActivity {
     private WebView webView;
     private Boolean darkModeEnabled = false;
-    private Boolean isRecreating = false;
+    private Boolean isWebViewInitialized = false;
     private Bundle webViewState = null;
     
     @Override
@@ -71,9 +71,6 @@ public class MainActivity extends AppCompatActivity {
             webViewState = savedInstanceState.getBundle("webViewState");
             darkModeEnabled = savedInstanceState.getBoolean("darkModeEnabled");
         }
-        setContentView(R.layout.activity_main);
-
-        super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         if (!ProcessPhoenix.isPhoenixProcess(this)) {
             // Initialize SentryManager for error tracking
