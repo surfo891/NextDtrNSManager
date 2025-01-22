@@ -48,4 +48,9 @@
     <string name="version">"Wersja"</string>
     <string name="whitelist_domains">"Jeśli włączysz Sentry proszę dodać te domeny do konfiguracji NextDNS."</string>
     <string name="whitelist_instructions">"Proszę zastanowić się nad opcją śledzenia błędów Sentry . To nie zbiera żadnych danych osobowych i pomaga mi ulepszyć aplikację."</string>
+    <string-array name="dark_mode_entries">
+        <item>Dopasuj System</item>
+        <item>Włączone</item>
+        <item>Wyłączony</item>
+    </string-array>
 </resources>

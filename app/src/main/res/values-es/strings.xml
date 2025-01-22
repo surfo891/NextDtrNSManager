@@ -48,4 +48,9 @@
     <string name="version">"Versión"</string>
     <string name="whitelist_domains">"Si activa Sentry, por favor incluya estos dominios en su configuración NextDNS."</string>
     <string name="whitelist_instructions">"Por favor, considere optar por el seguimiento de errores de Sentry. Esto no recopila ninguna información personal y me ayuda a mejorar la aplicación."</string>
+    <string-array name="dark_mode_entries">
+        <item>Coincidir Sistema</item>
+        <item>En</item>
+        <item>Apagado</item>
+    </string-array>
 </resources>
