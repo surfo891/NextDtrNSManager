@@ -3,7 +3,6 @@
     <string name="app_name">"NextDNS Manager"</string>
     <string name="author">"Autor"</string>
     <string name="back_title">"Voltar"</string>
-    <string name="crowdin">"Crowdin"</string>
     <string name="dark_mode">"Modo Escuro"</string>
     <string name="dark_mode_instructions">"Configuração do Modo Escuro"</string>
     <string name="developer">"Desenvolvedor"</string>
@@ -33,6 +32,7 @@
     <string name="ping_long">"Verifique rapidamente os tempos de ping nos servidores NextDNS."</string>
     <string name="ping_short">"Latência"</string>
     <string name="ping_title">"Teste de ping"</string>
+    <string name="poeditor">"POEditor"</string>
     <string name="privacy">"Privacidade"</string>
     <string name="privacy_policy">"Política de privacidade do NextDNS Manager"</string>
     <string name="private_dns">"DNS Particular"</string>
