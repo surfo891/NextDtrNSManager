@@ -48,25 +48,4 @@
     <string name="version">"Versión"</string>
     <string name="whitelist_domains">"Si activa Sentry, por favor incluya estos dominios en su configuración NextDNS."</string>
     <string name="whitelist_instructions">"Por favor, considere optar por el seguimiento de errores de Sentry. Esto no recopila ninguna información personal y me ayuda a mejorar la aplicación."</string>
-    <string name="author_name"></string>
-    <string name="author_real_name"></string>
-    <string name="author_url"></string>
-    <string name="donation_url"></string>
-    <string name="github_profile_url"></string>
-    <string name="github_url"></string>
-    <string name="github_issues_url"></string>
-    <string name="main_url"></string>
-    <string name="nextdns_privacy_policy_url"></string>
-    <string name="nextdns_protocol"></string>
-    <string name="nextdns_status"></string>
-    <string name="nextdns_user_agreement_url"></string>
-    <string name="ping_url"></string>
-    <string name="privacy_policy_url"></string>
-    <string name="sentry_info_url"></string>
-    <string name="test_url"></string>
-    <string name="translate_url"></string>
-    <string name="using_nextdns_status"></string>
-    <string name="versions_url"></string>
-    <string name="whitelist_domain_1"></string>
-    <string name="whitelist_domain_2"></string>
 </resources>
