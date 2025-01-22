@@ -62,7 +62,7 @@
         <Preference
             app:key="translate_button"
             app:summary="@string/translate_summary"
-            app:title="@string/crowdin" />
+            app:title="@string/poeditor" />
     </PreferenceCategory>
     <PreferenceCategory
         app:key="privacy"

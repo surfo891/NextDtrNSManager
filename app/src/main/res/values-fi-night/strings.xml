@@ -3,7 +3,6 @@
     <string name="app_name">"NextDNS Manager"</string>
     <string name="author">"Kirjoittaja"</string>
     <string name="back_title">"Takaisin"</string>
-    <string name="crowdin">"Crowdiini"</string>
     <string name="dark_mode">"Tumma Tila"</string>
     <string name="dark_mode_instructions">"Tumma Tilan Asetus"</string>
     <string name="developer">"Kehittäjä"</string>
@@ -33,6 +32,7 @@
     <string name="ping_long">"Tarkista nopeasti ping-ajat NextDNS-palvelimille."</string>
     <string name="ping_short">"Ping"</string>
     <string name="ping_title">"Ping-testi"</string>
+    <string name="poeditor">"POEditor"</string>
     <string name="privacy">"Yksityisyys"</string>
     <string name="privacy_policy">"NextDNS Managerin tietosuojakäytäntö"</string>
     <string name="private_dns">"Yksityinen DNS"</string>
