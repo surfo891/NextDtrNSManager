@@ -1,4 +1,4 @@
-package com.doubleangels.nextdnsmanagement;
+package com.doubleangels.nextdnsmanagement.utils;
 
 import android.app.Activity;
 import android.app.Application;
@@ -8,7 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-public class NextDNSApplication extends Application {
+public class ApplicationLifecycleManager extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
