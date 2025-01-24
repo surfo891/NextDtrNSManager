@@ -41,7 +41,6 @@ import com.doubleangels.nextdnsmanagement.protocol.VisualIndicator;
 import com.doubleangels.nextdnsmanagement.sentry.SentryInitializer;
 import com.doubleangels.nextdnsmanagement.sentry.SentryManager;
 import com.doubleangels.nextdnsmanagement.sharedpreferences.SharedPreferencesManager;
-import com.jakewharton.processphoenix.ProcessPhoenix;
 
 import java.util.Locale;
 
@@ -72,27 +71,25 @@ public class MainActivity extends AppCompatActivity {
             darkModeEnabled = savedInstanceState.getBoolean("darkModeEnabled");
         }
         setContentView(R.layout.activity_main);
-        if (!ProcessPhoenix.isPhoenixProcess(this)) {
-            SentryManager sentryManager = new SentryManager(this);
-            SharedPreferencesManager.init(this);
-            try {
-                if (ContextCompat.checkSelfPermission(this, POST_NOTIFICATIONS) == PackageManager.PERMISSION_DENIED) {
-                    ActivityCompat.requestPermissions(this, new String[]{POST_NOTIFICATIONS}, 1);
-                }
-                if (sentryManager.isEnabled()) {
-                    sentryManager.captureMessage("Sentry is enabled for NextDNS Manager.");
-                    SentryInitializer.initialize(this);
-                }
-                setupStatusBarForActivity();
-                setupToolbarForActivity();
-                String appLocale = setupLanguageForActivity();
-                sentryManager.captureMessage("Using locale: " + appLocale);
-                setupDarkModeForActivity(sentryManager, SharedPreferencesManager.getString("dark_mode", "match"));
-                setupVisualIndicatorForActivity(sentryManager, this);
-                setupWebViewForActivity(getString(R.string.main_url));
-            } catch (Exception e) {
-                sentryManager.captureException(e);
+        SentryManager sentryManager = new SentryManager(this);
+        SharedPreferencesManager.init(this);
+        try {
+            if (ContextCompat.checkSelfPermission(this, POST_NOTIFICATIONS) == PackageManager.PERMISSION_DENIED) {
+                ActivityCompat.requestPermissions(this, new String[]{POST_NOTIFICATIONS}, 1);
             }
+            if (sentryManager.isEnabled()) {
+                sentryManager.captureMessage("Sentry is enabled for NextDNS Manager.");
+                SentryInitializer.initialize(this);
+            }
+            setupStatusBarForActivity();
+            setupToolbarForActivity();
+            String appLocale = setupLanguageForActivity();
+            sentryManager.captureMessage("Using locale: " + appLocale);
+            setupDarkModeForActivity(sentryManager, SharedPreferencesManager.getString("dark_mode", "match"));
+            setupVisualIndicatorForActivity(sentryManager, this);
+            setupWebViewForActivity(getString(R.string.main_url));
+        } catch (Exception e) {
+            sentryManager.captureException(e);
         }
     }
 
