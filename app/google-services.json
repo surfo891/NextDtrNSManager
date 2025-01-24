@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "798993283439",
+    "project_id": "nextdns-manager-c251e",
+    "storage_bucket": "nextdns-manager-c251e.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:798993283439:android:fef87d0ca45503c4f0109a",
+        "android_client_info": {
+          "package_name": "com.doubleangels.nextdnsmanagement"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBmtfpAHpIhIF01rItEGuHVcCtnA-Qi3o4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
