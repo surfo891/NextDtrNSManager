@@ -101,6 +101,7 @@ public class SettingsActivity extends AppCompatActivity {
             setupButton("whitelist_domain_2_button", R.string.whitelist_domain_2);
             setupButton("sentry_info_button", R.string.sentry_info_url);
             setupButtonForIntent("author_button");
+            setupButton("feedback_button", R.string.feedback_url);
             setupButton("github_button", R.string.github_url);
             setupButton("github_issue_button", R.string.github_issues_url);
             setupButton("donation_button", R.string.donation_url);

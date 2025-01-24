@@ -11,6 +11,8 @@
     <string name="donation">"寄付"</string>
     <string name="donation_name">"このアプリを楽しんで寄付したい場合は、こちらで行うことができます。ご注意ください。これは完全に任意です。ご支援ありがとうございます！"</string>
     <string name="sentry">"Sentry"</string>
+    <string name="feedback">よろしければ、アプリを改善するための簡単なアンケートにご記入ください。</string>
+    <string name="feedback_title">フィードバック</string>
     <string name="generic_content_description">"これは一般的な内容説明です。"</string>
     <string name="github">"Github"</string>
     <string name="github_summary">"このアプリの Github リポジトリを表示するにはタップします。"</string>

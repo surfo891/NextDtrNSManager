@@ -11,6 +11,8 @@
     <string name="donation">"Wpłać"</string>
     <string name="donation_name">"Jeśli podoba Ci się ta aplikacja i chcesz ją wesprzeć, możesz to zrobić tutaj. Pamiętaj, że jest to całkowicie opcjonalne. Dziękujemy za wsparcie!"</string>
     <string name="sentry">"Sentry"</string>
+    <string name="feedback">Jeśli chcesz, wypełnij krótką ankietę, aby pomóc mi ulepszyć aplikację.</string>
+    <string name="feedback_title">Opinie</string>
     <string name="generic_content_description">"Jest to ogólny opis treści."</string>
     <string name="github">"Github"</string>
     <string name="github_summary">"Dotknij, aby wyświetlić repozytorium Github tej aplikacji."</string>

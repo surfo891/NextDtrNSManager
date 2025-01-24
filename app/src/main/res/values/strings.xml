@@ -11,6 +11,8 @@
     <string name="donation">"Donate"</string>
     <string name="donation_name">"If you enjoy this app and wish to donate, you can do so here. Please note, this is completely optional. Thanks for your support!"</string>
     <string name="sentry">"Sentry"</string>
+    <string name="feedback">If you wish, please fill out a quick survey to help me improve the app.</string>
+    <string name="feedback_title">Feedback</string>
     <string name="generic_content_description">"This is a generic content description."</string>
     <string name="github">"Github"</string>
     <string name="github_summary">"Tap to view this app's Github repository."</string>

@@ -11,6 +11,8 @@
     <string name="donation">"捐款"</string>
     <string name="donation_name">"如果您喜欢这个应用并希望捐赠，您可以在这里捐赠。请注意，这完全是可选的。感谢您的支持！"</string>
     <string name="sentry">"着色"</string>
+    <string name="feedback">如果您愿意，请填写一份简短的调查问卷，以帮助我改进应用程序。</string>
+    <string name="feedback_title">反馈</string>
     <string name="generic_content_description">"这是一个通用的内容描述。"</string>
     <string name="github">"Gith"</string>
     <string name="github_summary">"点击查看此应用的 Github 仓库."</string>
@@ -29,7 +31,7 @@
     <string name="permission_question">"如果您对这些权限有疑问，请在 Github上打开一个问题。"</string>
     <string name="permission_title">"权限"</string>
     <string name="ping_disabled">"此操作当前不可用。"</string>
-    <string name="ping_long">"快速查看 nextDNS 服务器的 ping 时间。"</string>
+    <string name="ping_long">"快速查看 NextDNS 服务器的 ping 时间。"</string>
     <string name="ping_short">"平"</string>
     <string name="ping_title">"Ping 测试"</string>
     <string name="poeditor">"POEditor"</string>
