@@ -157,7 +157,7 @@ public class SettingsActivity extends AppCompatActivity {
 
         private void setupDarkModeChangeListener(ListPreference setting) {
             setting.setOnPreferenceChangeListener((preference, newValue) -> {
-                new SentryManager(requireContext()).captureMessage("Dark mode set to" + newValue.toString() + ".");
+                new SentryManager(requireContext()).captureMessage("Dark mode set to " + newValue.toString() + ".");
                 SharedPreferencesManager.putString("dark_mode", newValue.toString());
                 ProcessPhoenix.triggerRebirth(requireContext());
                 return true;

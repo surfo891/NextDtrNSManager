@@ -20,7 +20,7 @@
         <SwitchPreference
             app:key="sentry_enable"
             app:title="@string/sentry_enable_instructions"
-            app:defaultValue="true" />
+            app:defaultValue="false" />
         <Preference
             app:key="whitelist_domains"
             app:summary="@string/whitelist_domains"
