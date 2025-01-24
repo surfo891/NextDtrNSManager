@@ -8,7 +8,6 @@ import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.widget.Toast;
 
@@ -89,7 +88,6 @@ public class SettingsActivity extends AppCompatActivity {
             SwitchPreference sentryEnablePreference = findPreference("sentry_enable");
             ListPreference darkModePreference = findPreference("dark_mode");
             if (sentryEnablePreference != null) {
-                Log.d("TEST", sentryEnablePreference.toString());
                 setupSentryChangeListener(sentryEnablePreference);
             }
             if (darkModePreference != null) {
@@ -159,7 +157,7 @@ public class SettingsActivity extends AppCompatActivity {
 
         private void setupDarkModeChangeListener(ListPreference setting) {
             setting.setOnPreferenceChangeListener((preference, newValue) -> {
-                Log.i("Output","Output: " + newValue.toString());
+                new SentryManager(requireContext()).captureMessage("Dark mode set to" + newValue.toString() + ".");
                 SharedPreferencesManager.putString("dark_mode", newValue.toString());
                 ProcessPhoenix.triggerRebirth(requireContext());
                 return true;
@@ -169,11 +167,13 @@ public class SettingsActivity extends AppCompatActivity {
         private void setupSentryChangeListener(SwitchPreference switchPreference) {
             if (switchPreference != null) {
                 switchPreference.setOnPreferenceChangeListener((preference, newValue) -> {
+                    new SentryManager(requireContext()).captureMessage("Sentry set to " + newValue.toString() + ".");
                     boolean isEnabled = (boolean) newValue;
                     SharedPreferencesManager.putBoolean("sentry_enable", isEnabled);
                     setPreferenceVisibility("whitelist_domains", isEnabled);
                     setPreferenceVisibility("whitelist_domain_1_button", isEnabled);
                     setPreferenceVisibility("whitelist_domain_2_button", isEnabled);
+                    ProcessPhoenix.triggerRebirth(requireContext());
                     return true;
                 });
             }

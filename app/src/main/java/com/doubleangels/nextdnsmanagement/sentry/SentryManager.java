@@ -11,7 +11,7 @@ import io.sentry.Sentry;
 public class SentryManager {
 
     private final Context context;
-    public String TAG = "NextDNS Manager Logging";
+    public String TAG = "DebugLogging";
     public SharedPreferences sharedPreferences;
     public SentryManager(Context context) {
         this.context = context;

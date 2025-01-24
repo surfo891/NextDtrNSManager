@@ -1,48 +1,58 @@
-# Keep all classes in the support libraries
+# Keep all classes and methods in your package
+-keep class com.doubleangels.nextdnsmanagement.** { *; }
+-keepattributes *Annotation*
+-dontwarn com.doubleangels.nextdnsmanagement.**
+
+# General ProGuard rules
+-dontwarn javax.annotation.**
+
+# AndroidX libraries
+-keep class androidx.** { *; }
+-dontwarn androidx.**
+
+# Material Design components
+-keep class com.google.android.material.** { *; }
+-dontwarn com.google.android.material.**
+
+# Webkit
+-keep class androidx.webkit.** { *; }
+-dontwarn androidx.webkit.**
+
+# Appcompat and Preferences
 -keep class androidx.appcompat.** { *; }
 -keep class androidx.preference.** { *; }
--keep class com.google.android.material.** { *; }
+-dontwarn androidx.appcompat.**
+-dontwarn androidx.preference.**
 
-# Keep all classes in other dependencies
+# Process Phoenix (Jake Wharton)
 -keep class com.jakewharton.processphoenix.** { *; }
+-dontwarn com.jakewharton.processphoenix.**
+
+# Retrofit (Gson Converter)
 -keep class com.squareup.retrofit2.** { *; }
--keep class io.sentry.** { *; }
--keep class org.mozilla.geckoview.** { *; }
-
-# Keep all public and protected methods in the above libraries
--keepclassmembers class androidx.appcompat.** { public protected *; }
--keepclassmembers class androidx.preference.** { public protected *; }
--keepclassmembers class com.google.android.material.** { public protected *; }
--keepclassmembers class com.jakewharton.processphoenix.** { public protected *; }
--keepclassmembers class com.squareup.retrofit2.** { public protected *; }
--keepclassmembers class io.sentry.** { public protected *; }
--keepclassmembers class org.mozilla.geckoview.** { public protected *; }
-
-# Keep the Retrofit interfaces and their methods
--keep interface retrofit2.** { *; }
--keepclassmembers,allowobfuscation interface * {
-    @retrofit2.http.* <methods>;
-}
-
-# Keep the Gson classes
--keep class com.google.gson.** { *; }
--keep class org.apache.commons.** { *; }
-
-# Keep enum types and fields
--keepclassmembers enum * {
-    public static **[] values();
-    public static ** valueOf(java.lang.String);
-}
-
-# Keep the entry point for apps
+-dontwarn com.squareup.retrofit2.**
+-keepattributes Signature
 -keepattributes *Annotation*
--keepclassmembers class * {
-    public static void main(java.lang.String[]);
-}
+-keep class com.google.gson.** { *; }
+-dontwarn com.google.gson.**
 
-# This is generated automatically by the Android Gradle plugin.
--dontwarn java.beans.BeanInfo
--dontwarn java.beans.FeatureDescriptor
--dontwarn java.beans.IntrospectionException
--dontwarn java.beans.Introspector
--dontwarn java.beans.PropertyDescriptor
+# CircleImageView
+-keep class de.hdodenhof.circleimageview.** { *; }
+-dontwarn de.hdodenhof.circleimageview.**
+
+# Sentry Android
+-keep class io.sentry.** { *; }
+-dontwarn io.sentry.**
+-keepattributes *Annotation*
+
+# LeakCanary (debug only, no need to obfuscate for debug builds)
+-dontwarn com.squareup.leakcanary.**
+-keep class com.squareup.leakcanary.** { *; }
+
+# General Gson rules
+-keepclassmembers class * {
+    @com.google.gson.annotations.SerializedName <fields>;
+}
+-keepclassmembers class * {
+    @com.google.gson.annotations.Expose <fields>;
+}
