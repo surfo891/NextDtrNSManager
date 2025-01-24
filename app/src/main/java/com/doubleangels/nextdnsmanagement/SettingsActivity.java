@@ -4,7 +4,6 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Build;
@@ -18,11 +17,11 @@ import androidx.appcompat.app.AppCompatDelegate;
 import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
-import androidx.preference.PreferenceManager;
 import androidx.preference.SwitchPreference;
 
 import com.doubleangels.nextdnsmanagement.sentry.SentryInitializer;
 import com.doubleangels.nextdnsmanagement.sentry.SentryManager;
+import com.doubleangels.nextdnsmanagement.sharedpreferences.SharedPreferencesManager;
 import com.jakewharton.processphoenix.ProcessPhoenix;
 
 import java.util.Locale;
@@ -36,14 +35,14 @@ public class SettingsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
         sentryManager = new SentryManager(this);
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        SharedPreferencesManager.init(this);
         try {
             if (sentryManager.isEnabled()) {
                 SentryInitializer.initialize(this);
             }
             String appLocale = setupLanguageForActivity();
             sentryManager.captureMessage("Using locale: " + appLocale);
-            setupDarkModeForActivity(sharedPreferences);
+            setupDarkModeForActivity(SharedPreferencesManager.getString("dark_mode", "match"));
             initializeViews();
         } catch (Exception e) {
             sentryManager.captureException(e);
@@ -60,9 +59,8 @@ public class SettingsActivity extends AppCompatActivity {
         return appLocale.getLanguage();
     }
 
-    private void setupDarkModeForActivity(SharedPreferences sharedPreferences) {
+    private void setupDarkModeForActivity(String darkMode) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
-            String darkMode = sharedPreferences.getString("dark_mode", "match");
             sentryManager.captureMessage("Dark mode setting: " + darkMode);
             if (darkMode.contains("match")) {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
@@ -86,15 +84,16 @@ public class SettingsActivity extends AppCompatActivity {
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             setPreferencesFromResource(R.xml.root_preferences, rootKey);
-            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext());
-            setInitialSentryVisibility(sharedPreferences);
+            SharedPreferencesManager.init(requireContext());
+            setInitialSentryVisibility(SharedPreferencesManager.getBoolean("sentry_enable", false));
             SwitchPreference sentryEnablePreference = findPreference("sentry_enable");
             ListPreference darkModePreference = findPreference("dark_mode");
             if (sentryEnablePreference != null) {
-                setupSentryChangeListener(sentryEnablePreference, sharedPreferences);
+                Log.d("TEST", sentryEnablePreference.toString());
+                setupSentryChangeListener(sentryEnablePreference);
             }
             if (darkModePreference != null) {
-            setupDarkModeChangeListener(darkModePreference, sharedPreferences);
+            setupDarkModeChangeListener(darkModePreference);
         }
 
             setupButton("whitelist_domain_1_button", R.string.whitelist_domain_1);
@@ -118,8 +117,7 @@ public class SettingsActivity extends AppCompatActivity {
             }
         }
 
-        private void setInitialSentryVisibility(SharedPreferences sharedPreferences) {
-            boolean visibility = sharedPreferences.getBoolean("sentry_enable", false);
+        private void setInitialSentryVisibility(Boolean visibility) {
             setPreferenceVisibility("whitelist_domains", visibility);
             setPreferenceVisibility("whitelist_domain_1_button", visibility);
             setPreferenceVisibility("whitelist_domain_2_button", visibility);
@@ -159,25 +157,23 @@ public class SettingsActivity extends AppCompatActivity {
             });
         }
 
-        private void setupDarkModeChangeListener(ListPreference setting, SharedPreferences sharedPreferences) {
+        private void setupDarkModeChangeListener(ListPreference setting) {
             setting.setOnPreferenceChangeListener((preference, newValue) -> {
                 Log.i("Output","Output: " + newValue.toString());
-                sharedPreferences.edit().putString("dark_mode", newValue.toString()).apply();
+                SharedPreferencesManager.putString("dark_mode", newValue.toString());
                 ProcessPhoenix.triggerRebirth(requireContext());
                 return true;
             });
         }
 
-        private void setupSentryChangeListener(SwitchPreference switchPreference, SharedPreferences sharedPreferences) {
+        private void setupSentryChangeListener(SwitchPreference switchPreference) {
             if (switchPreference != null) {
                 switchPreference.setOnPreferenceChangeListener((preference, newValue) -> {
                     boolean isEnabled = (boolean) newValue;
-                    SharedPreferences.Editor preferenceEdit = sharedPreferences.edit();
-                    preferenceEdit.putBoolean("sentry_enable", isEnabled);
+                    SharedPreferencesManager.putBoolean("sentry_enable", isEnabled);
                     setPreferenceVisibility("whitelist_domains", isEnabled);
                     setPreferenceVisibility("whitelist_domain_1_button", isEnabled);
                     setPreferenceVisibility("whitelist_domain_2_button", isEnabled);
-                    preferenceEdit.apply();
                     return true;
                 });
             }

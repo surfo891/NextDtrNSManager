@@ -3,11 +3,10 @@ package com.doubleangels.nextdnsmanagement;
 
 import static android.Manifest.permission.POST_NOTIFICATIONS;
 
-import android.content.ComponentCallbacks2;
 import android.annotation.SuppressLint;
 import android.app.DownloadManager;
+import android.content.ComponentCallbacks2;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.net.Uri;
@@ -35,13 +34,13 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.LifecycleOwner;
-import androidx.preference.PreferenceManager;
 import androidx.webkit.WebSettingsCompat;
 import androidx.webkit.WebViewFeature;
 
 import com.doubleangels.nextdnsmanagement.protocol.VisualIndicator;
 import com.doubleangels.nextdnsmanagement.sentry.SentryInitializer;
 import com.doubleangels.nextdnsmanagement.sentry.SentryManager;
+import com.doubleangels.nextdnsmanagement.sharedpreferences.SharedPreferencesManager;
 import com.jakewharton.processphoenix.ProcessPhoenix;
 
 import java.util.Locale;
@@ -75,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         if (!ProcessPhoenix.isPhoenixProcess(this)) {
             SentryManager sentryManager = new SentryManager(this);
-            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+            SharedPreferencesManager.init(this);
             try {
                 if (ContextCompat.checkSelfPermission(this, POST_NOTIFICATIONS) == PackageManager.PERMISSION_DENIED) {
                     ActivityCompat.requestPermissions(this, new String[]{POST_NOTIFICATIONS}, 1);
@@ -88,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
                 setupToolbarForActivity();
                 String appLocale = setupLanguageForActivity();
                 sentryManager.captureMessage("Using locale: " + appLocale);
-                setupDarkModeForActivity(sentryManager, sharedPreferences);
+                setupDarkModeForActivity(sentryManager, SharedPreferencesManager.getString("dark_mode", "match"));
                 setupVisualIndicatorForActivity(sentryManager, this);
                 setupWebViewForActivity(getString(R.string.main_url));
             } catch (Exception e) {
@@ -171,8 +170,7 @@ public class MainActivity extends AppCompatActivity {
         return appLocale.getLanguage();
     }
 
-    private void setupDarkModeForActivity(SentryManager sentryManager, SharedPreferences sharedPreferences) {
-        String darkMode = sharedPreferences.getString("dark_mode", "match");
+    private void setupDarkModeForActivity(SentryManager sentryManager, String darkMode) {
         switch (darkMode) {
             case "match":
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
