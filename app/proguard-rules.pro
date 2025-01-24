@@ -24,10 +24,6 @@
 -dontwarn androidx.appcompat.**
 -dontwarn androidx.preference.**
 
-# Process Phoenix (Jake Wharton)
--keep class com.jakewharton.processphoenix.** { *; }
--dontwarn com.jakewharton.processphoenix.**
-
 # Retrofit (Gson Converter)
 -keep class com.squareup.retrofit2.** { *; }
 -dontwarn com.squareup.retrofit2.**

@@ -1,5 +1,6 @@
 package com.doubleangels.nextdnsmanagement.sharedpreferences;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 
@@ -17,9 +18,10 @@ public class SharedPreferencesManager {
         }
     }
 
+    @SuppressLint("ApplySharedPref")
     public static void putString(String key, String value) {
         checkInitialization();
-        sharedPreferences.edit().putString(key, value).apply();
+        sharedPreferences.edit().putString(key, value).commit();
     }
 
     public static String getString(String key, String defaultValue) {
@@ -27,9 +29,10 @@ public class SharedPreferencesManager {
         return sharedPreferences.getString(key, defaultValue);
     }
 
+    @SuppressLint("ApplySharedPref")
     public static void putBoolean(String key, boolean value) {
         checkInitialization();
-        sharedPreferences.edit().putBoolean(key, value).apply();
+        sharedPreferences.edit().putBoolean(key, value).commit();
     }
 
     public static boolean getBoolean(String key, boolean defaultValue) {

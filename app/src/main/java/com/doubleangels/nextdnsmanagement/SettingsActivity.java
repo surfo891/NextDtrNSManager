@@ -21,7 +21,6 @@ import androidx.preference.SwitchPreference;
 import com.doubleangels.nextdnsmanagement.sentry.SentryInitializer;
 import com.doubleangels.nextdnsmanagement.sentry.SentryManager;
 import com.doubleangels.nextdnsmanagement.sharedpreferences.SharedPreferencesManager;
-import com.jakewharton.processphoenix.ProcessPhoenix;
 
 import java.util.Locale;
 
@@ -35,6 +34,8 @@ public class SettingsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_settings);
         sentryManager = new SentryManager(this);
         SharedPreferencesManager.init(this);
+        sentryManager.captureMessage("SharedPreferences 'dark_mode' value: " + SharedPreferencesManager.getString("dark_mode", "match"));
+        sentryManager.captureMessage("SharedPreferences 'sentry_enable' value: " + SharedPreferencesManager.getBoolean("sentry_enable", false));
         try {
             if (sentryManager.isEnabled()) {
                 SentryInitializer.initialize(this);
@@ -157,9 +158,8 @@ public class SettingsActivity extends AppCompatActivity {
 
         private void setupDarkModeChangeListener(ListPreference setting) {
             setting.setOnPreferenceChangeListener((preference, newValue) -> {
-                new SentryManager(requireContext()).captureMessage("Dark mode set to" + newValue.toString() + ".");
+                new SentryManager(requireContext()).captureMessage("Dark mode set to " + newValue.toString() + ".");
                 SharedPreferencesManager.putString("dark_mode", newValue.toString());
-                ProcessPhoenix.triggerRebirth(requireContext());
                 return true;
             });
         }
@@ -173,7 +173,6 @@ public class SettingsActivity extends AppCompatActivity {
                     setPreferenceVisibility("whitelist_domains", isEnabled);
                     setPreferenceVisibility("whitelist_domain_1_button", isEnabled);
                     setPreferenceVisibility("whitelist_domain_2_button", isEnabled);
-                    ProcessPhoenix.triggerRebirth(requireContext());
                     return true;
                 });
             }
