@@ -11,6 +11,8 @@
     <string name="donation">"Bağış"</string>
     <string name="donation_name">"Bu uygulamadan keyif alıyorsanız ve bağış yapmak istiyorsanız, bunu buradan yapabilirsiniz. Lütfen unutmayın, bu tamamen isteğe bağlıdır. Desteğiniz için teşekkürler!"</string>
     <string name="sentry">"Sentry"</string>
+    <string name="feedback">Eğer isterseniz, uygulamayı geliştirmeme yardımcı olmak için kısa bir anket doldurun.</string>
+    <string name="feedback_title">Geri Bildirim</string>
     <string name="generic_content_description">"Bu genel bir içerik açıklamasıdır."</string>
     <string name="github">"Github"</string>
     <string name="github_summary">"Bu uygulamanın Github deposunu görüntülemek için dokunun."</string>

@@ -95,6 +95,10 @@
             app:summary="@string/permission"
             app:title="@string/permission_title" />
         <Preference
+            app:key="feedback_button"
+            app:summary="@string/feedback"
+            app:title="@string/feedback_title"/>
+        <Preference
             app:key="version_button"
             app:summary="0.0"
             app:title="@string/version" />

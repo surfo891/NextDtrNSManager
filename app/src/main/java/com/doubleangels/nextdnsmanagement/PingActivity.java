@@ -2,16 +2,16 @@ package com.doubleangels.nextdnsmanagement;
 
 import android.annotation.SuppressLint;
 import android.content.res.Configuration;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.ContextThemeWrapper;
+import android.view.WindowInsetsController;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.LifecycleOwner;
 
-import com.doubleangels.nextdnsmanagement.protocol.VisualIndicator;
 import com.doubleangels.nextdnsmanagement.sentry.SentryInitializer;
 import com.doubleangels.nextdnsmanagement.sentry.SentryManager;
 
@@ -34,9 +34,9 @@ public class PingActivity extends AppCompatActivity {
             if (sentryManager.isEnabled()) {
                 SentryInitializer.initialize(this);
             }
+            setupStatusBarForActivity();
             String appLocale = setupLanguageForActivity();
             sentryManager.captureMessage("Using locale: " + appLocale);
-            setupVisualIndicatorForActivity(sentryManager, this);
             setupWebViewForActivity(getString(R.string.ping_url), getString(R.string.test_url));
         } catch (Exception e) {
             sentryManager.captureException(e);
@@ -49,6 +49,21 @@ public class PingActivity extends AppCompatActivity {
         webView.destroy();
     }
 
+    private void setupStatusBarForActivity() {
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            WindowInsetsController insetsController = getWindow().getInsetsController();
+            if (insetsController != null) {
+                boolean isLightTheme = (getResources().getConfiguration().uiMode &
+                        android.content.res.Configuration.UI_MODE_NIGHT_MASK) ==
+                        android.content.res.Configuration.UI_MODE_NIGHT_NO;
+                insetsController.setSystemBarsAppearance(
+                        isLightTheme ? WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS : 0,
+                        WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
+                );
+            }
+        }
+    }
+
     private String setupLanguageForActivity() {
         Configuration config = getResources().getConfiguration();
         Locale appLocale = config.getLocales().get(0);
@@ -57,14 +72,6 @@ public class PingActivity extends AppCompatActivity {
         newConfig.setLocale(appLocale);
         new ContextThemeWrapper(getBaseContext(), R.style.AppTheme).applyOverrideConfiguration(newConfig);
         return appLocale.getLanguage();
-    }
-
-    private void setupVisualIndicatorForActivity(SentryManager sentryManager, LifecycleOwner lifecycleOwner) {
-        try {
-            new VisualIndicator(this).initialize(this, lifecycleOwner, this);
-        } catch (Exception e) {
-            sentryManager.captureException(e);
-        }
     }
 
     @SuppressLint("SetJavaScriptEnabled")
