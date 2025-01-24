@@ -5,23 +5,25 @@
         <item name="colorTertiary">?android:attr/textColorPrimary</item>
         <item name="android:statusBarColor">@color/main</item>
         <item name="android:textColorSecondary">@color/black</item>
-        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowLightStatusBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="popupTheme">@style/PopupTheme</item>
     </style>
-    <style name="PopupTheme" parent="ThemeOverlay.AppCompat.Light">
-        <item name="android:background">@color/white</item>
-        <item name="android:textColorPrimary">@color/black</item>
+    <style name="PopupTheme" parent="AppTheme">
+        <item name="android:popupBackground">@color/white</item>
+        <item name="android:textColorPrimary">@color/white</item>
     </style>
-    <style name="ToolbarTheme" parent="ThemeOverlay.AppCompat.ActionBar">
+    <style name="ToolbarTheme" parent="AppTheme">
         <item name="android:background">@color/main</item>
-        <item name="android:textColorSecondary">@color/black</item>
+        <item name="android:textColorPrimary">@color/white</item>
+        <item name="android:textColorSecondary">@color/white</item>
     </style>
-    <style name="PreferenceTheme" parent="@style/AppTheme">
+    <style name="PreferenceTheme" parent="AppTheme">
         <item name="colorAccent">@color/main</item>
         <item name="android:windowBackground">@color/white</item>
+        <item name="android:windowLightStatusBar">true</item>
     </style>
-    <style name="StatusTheme" parent="@style/AppTheme">
+    <style name="StatusTheme" parent="AppTheme">
         <item name="android:background">@color/white</item>
     </style>
     <style name="AuthorTheme">

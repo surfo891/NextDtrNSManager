@@ -3,7 +3,9 @@ package com.doubleangels.nextdnsmanagement;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.view.WindowInsetsController;
 import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -26,11 +28,27 @@ public class AuthorActivity extends AppCompatActivity {
             if (sentryManager.isEnabled()) {
                 SentryInitializer.initialize(this);
             }
+            setupStatusBarForActivity();
             String appLocale = setupLanguageForActivity();
             sentryManager.captureMessage("Using locale: " + appLocale);
             setupPersonalLinks(sentryManager);
         } catch (Exception e) {
             sentryManager.captureException(e);
+        }
+    }
+
+    private void setupStatusBarForActivity() {
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            WindowInsetsController insetsController = getWindow().getInsetsController();
+            if (insetsController != null) {
+                boolean isLightTheme = (getResources().getConfiguration().uiMode &
+                        android.content.res.Configuration.UI_MODE_NIGHT_MASK) ==
+                        android.content.res.Configuration.UI_MODE_NIGHT_NO;
+                insetsController.setSystemBarsAppearance(
+                        isLightTheme ? WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS : 0,
+                        WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
+                );
+            }
         }
     }
 

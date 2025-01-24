@@ -1,5 +1,5 @@
 <resources>
-        <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <style name="AppTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
                 <item name="android:background">@color/main_dark</item>
                 <item name="colorPrimary">@color/main</item>
                 <item name="colorSecondary">@color/main</item>
@@ -10,11 +10,11 @@
                 <item name="windowNoTitle">true</item>
                 <item name="popupTheme">@style/PopupTheme</item>
         </style>
-        <style name="PopupTheme" parent="ThemeOverlay.AppCompat.Dark">
-                <item name="android:background">@color/main_dark</item>
+        <style name="PopupTheme" parent="AppTheme">
+                <item name="android:popupBackground">@color/main_dark</item>
                 <item name="android:textColorPrimary">@color/white</item>
         </style>
-        <style name="ToolbarTheme" parent="ThemeOverlay.AppCompat.ActionBar">
+        <style name="ToolbarTheme" parent="AppTheme">
                 <item name="android:background">@color/main_dark</item>
                 <item name="android:textColorSecondary">@color/white</item>
         </style>
