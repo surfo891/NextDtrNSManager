@@ -35,18 +35,20 @@ public class PermissionsAdapter extends RecyclerView.Adapter<PermissionsAdapter.
     @Override
     public void onBindViewHolder(@NonNull PermissionViewHolder holder, int position) {
         PermissionInfo permissionInfo = permissions.get(position);
+
         boolean isGranted = true;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-            if (permissionInfo.name.equals(android.Manifest.permission.POST_NOTIFICATIONS)) {
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
-                    isGranted = holder.itemView.getContext().checkSelfPermission(permissionInfo.name) 
+        if (permissionInfo.name.equals(android.Manifest.permission.POST_NOTIFICATIONS)) {
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+                isGranted = holder.itemView.getContext().checkSelfPermission(permissionInfo.name)
                         == PackageManager.PERMISSION_GRANTED;
-                }
             }
         }
-        
-        holder.permissionName.setText(permissionInfo.loadLabel(holder.itemView.getContext().getPackageManager()).toString().toUpperCase());
-        
+
+        holder.permissionName.setText(permissionInfo
+                .loadLabel(holder.itemView.getContext().getPackageManager())
+                .toString()
+                .toUpperCase());
+
         CharSequence description = permissionInfo.loadDescription(holder.itemView.getContext().getPackageManager());
         String displayText;
         if (description == null) {
@@ -56,9 +58,10 @@ public class PermissionsAdapter extends RecyclerView.Adapter<PermissionsAdapter.
             if (!displayText.endsWith(".")) {
                 displayText += ".";
             }
-            displayText = displayText.toUpperCase() + (isGranted ? " (GRANTED)" : " (NOT GRANTED)");
-            holder.permissionDescription.setText(description);
+            displayText = displayText + (isGranted ? " (GRANTED)" : " (NOT GRANTED)");
         }
+
+        holder.permissionDescription.setText(displayText);
     }
 
     @Override
@@ -70,6 +73,7 @@ public class PermissionsAdapter extends RecyclerView.Adapter<PermissionsAdapter.
         TextView permissionName;
         TextView permissionDescription;
 
+        @SuppressLint("SetTextI18n")
         public PermissionViewHolder(View itemView) {
             super(itemView);
             permissionName = itemView.findViewById(R.id.permissionName);
