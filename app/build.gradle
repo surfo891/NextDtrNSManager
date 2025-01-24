@@ -1,6 +1,7 @@
 plugins {
     id "com.android.application"
     id "io.sentry.android.gradle" version "4.14.1"
+    id "com.google.gms.google-services"
 }
 
 android {
