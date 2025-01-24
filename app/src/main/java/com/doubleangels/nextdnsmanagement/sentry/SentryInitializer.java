@@ -2,7 +2,8 @@ package com.doubleangels.nextdnsmanagement.sentry;
 
 import android.content.Context;
 
-import io.sentry.android.core.BuildConfig;
+import com.doubleangels.nextdnsmanagement.BuildConfig;
+
 import io.sentry.android.core.SentryAndroid;
 
 public class SentryInitializer {
