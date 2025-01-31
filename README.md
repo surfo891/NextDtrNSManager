@@ -1,6 +1,6 @@
 <!--suppress ALL -->
 <p align="center">
-  <img src="https://img.shields.io/github/release/doubleangels/NextDNSManager.svg?logo=github&label=GitHub%20Build&style=for-the-badge" alt="GitHub Build">
+  <img src="https://img.shields.io/github/release/doubleangels/NextDNSManager.svg?logo=github&l
   <img src="https://img.shields.io/f-droid/v/com.doubleangels.nextdnsmanagement.svg?logo=F-Droid&label=F-Droid%20Build&style=for-the-badge" alt="F-Droid Build">
   <img src="https://img.shields.io/github/actions/workflow/status/doubleangels/NextDNSManager/.github/workflows/deploy.yml?label=Deployment%20Pipeline&style=for-the-badge" alt="Main Deployment">
   <img src="https://img.shields.io/github/actions/workflow/status/doubleangels/NextDNSManager/.github/workflows/test-dev.yml?label=Development%20Testing&style=for-the-badge" alt="Development Testing">
@@ -55,32 +55,22 @@ Which app you should use depends on your privacy preferences and how often you w
 
 For each build ("version") of the app, there are timelines for when the build will be available, so methods with longer timelines will result in longer wait times for updates.
 
-|                  | Google Play   | Sideloaded APK | F-Droid       |
-|------------------|---------------|----------------|---------------|
-| **Availability** | A few minutes | A few minutes  | Up to 14 days |
+|               F-Droid       |
+|------------------|--------------|
+| **Av
 
-F-Droid takes much longer than any of the other methods because they have a human involved in the process, each app is signed by a human on a computer that is air-gapped (not connected to the internet).
+F-Droid takes much longer than any of the other methods because they have a human involved in the process, each app is signed by a human on a computer that is air-gapped (not=com.doubls.nextdnsmanagement
 
-## Google Play Store
+The most recent APK is avail
 
-NextDNS Manager is available on the Google Play Store [here](https://play.google.com/store/apps/details?id=com.doubleangels.nextdnsmanagement).
+# Reporting Issue
 
-## F-Droid Installation
-
-NextDNS Manager is available on F-Droid [here](https://f-droid.org/en/packages/com.doubleangels.nextdnsmanagement).
-
-## Manual Installation
-
-The most recent APK is available for download [here](https://github.com/doubleangels/NextDNSManager/releases).
-
-# Reporting Issues/Suggestions and Feedback
-
-If you encounter any issues while using NextDNS Manager, I encourage you to report them to me. Please read the [FAQ's](FAQ.md) and then open an [issue](https://github.com/doubleangels/NextDNSManager/issues/new/choose). Please note that I work on this project in my free time, so issue responses may be delayed.
-Your suggestions and feedback are valuable to me as they help me improve NextDNS Manager. If you have any ideas for enhancements or feedback to share, please do so by opening a new issue as outlined above. Be sure to provide a detailed description of your suggestion or feedback.
+If you encounter any issues while usinager, I encourage you to report them tor/issues/newroject in my free time, so issue responses may be delayed.
+Your suggestions and feedback are valuable to me as they help me improve NextDNS Manager. If you have any ideas for enhancementslease do so by opening a new issue 
 
 # Contributing
 
-Please learn how to contribute to this project [here](CONTRIBUTING.md).
+Please learn how to contribute to 
 
 # Security Policy
 
@@ -88,14 +78,4 @@ Learn about this application's security policy [here](SECURITY.md).
 
 # Terms & Conditions/Privacy Policy
 
-- [Privacy Policy](https://doubleangels.github.io/privacyPolicy/nextdns.html)
-- [Terms and Conditions](https://doubleangels.github.io/privacyPolicy/nextdns_terms.html)
-
-# Donations
-
-- Donations are always optional.
-- [Donate Here](https://donate.stripe.com/4gw8yhbvH0mg6SQ7ss)
-
-# License
-
-NextDNS Manager is open-source and released under the [GPLv3](LICENSE).
+- [Privacy Policy](https://doubleangels.github.io/privacyPolicy/nextdns.html) [GPLv3](LICENSE).
