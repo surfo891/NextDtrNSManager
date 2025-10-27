@@ -81,7 +81,7 @@ jobs:
         run: mv app/build/outputs/apk/release/app-release-unsigned-signed.apk app/build/outputs/apk/release/app-release.apk
 
       - name: Upload APK to Github release artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: github-release-apk
           path: app/build/outputs/apk/release/app-release.apk
@@ -127,7 +127,7 @@ jobs:
           keyPassword: ${{ secrets.KEY_PASSWORD }}
 
       - name: Upload bundle to Github release artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: google-play-bundle
           path: app/build/outputs/bundle/release/app-release.aab
